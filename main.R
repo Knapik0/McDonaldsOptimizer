@@ -23,23 +23,47 @@ produkty <- data.frame(
   cena = c(40, 45, 122, 119, 119, 118, 106, 50, 45, 55, 64, 128, 132, 78, 157, 112, 132, 206,
            109, 144, 35, 50, 69, 78, 82, 56, 74, 56, 74, 56, 74, 45)
 )
-portfel <- 500
+#portfel <- 120
+#
+##Definiujemy funkcję przystosowania
+#fitnessFunc <- function(chr) {
+#  calkowitaWartoscChr <- chr %*% produkty$energia
+#  calkowitaCenaChr <- chr %*% produkty$cena
+#  if (calkowitaCenaChr > portfel) return(-calkowitaWartoscChr)
+#  else return(calkowitaWartoscChr)
+#}
+#
+##Uruchamiamy algorytm genetyczny dla zadanych parametrów
+#wyniki <- ga(type="binary", nBits=32, fitness=fitnessFunc, popSize=300,
+#             pcrossover=0.55, pmutation=0.25, elitism=5, maxiter=1000, seed=100)
+#
+##Prezentacja najbardziej optymalnego zamówienia
+#decode <- function(chr){
+#  print( paste("Najbardziej optymalne zamówienie do kwoty",portfel/10,"zł:" ))
+#  print( produkty[chr == 1, ] )
+#  print( paste("Wartość zamówienia =",(chr %*% produkty$cena)/10,"zł") )
+#  print( paste("Wartość energetyczna =", chr %*% produkty$energia, "kJ =", (chr %*% produkty$energia)*0.239, "kcal") )
+#}
+#decode(wyniki@solution[1,])
 
-#Definiujemy funkcję przystosowania
+minKalorie <- 2400 / 0.239
+
+#Drugi wariant funkcji przystosowania
 fitnessFunc <- function(chr) {
   calkowitaWartoscChr <- chr %*% produkty$energia
-  calkowitaWagaChr <- chr %*% produkty$cena
-  if (calkowitaWagaChr > portfel) return(-calkowitaWartoscChr)
-  else return(calkowitaWartoscChr)
+  calkowitaCenaChr <- chr %*% produkty$cena
+  if ((calkowitaWartoscChr < minKalorie) || calkowitaCenaChr == 0) return(-calkowitaCenaChr)
+  else return(200/calkowitaCenaChr)
 }
 
+
 #Uruchamiamy algorytm genetyczny dla zadanych parametrów
-wyniki <- ga(type="binary", nBits=32, fitness=fitnessFunc, popSize=500,
+wyniki <- ga(type="binary", nBits=32, fitness=fitnessFunc, popSize=300,
              pcrossover=0.55, pmutation=0.25, elitism=5, maxiter=1000, seed=100)
 
 #Prezentacja najbardziej optymalnego zamówienia
 decode <- function(chr){
-  print( paste("Najbardziej optymalne zamówienie do kwoty",portfel/10,"zł:" ))
+  print( paste("Najbardziej optymalne zamówienie na min",minKalorie*0.239,"kcal:" ))
   print( produkty[chr == 1, ] )
   print( paste("Wartość zamówienia =",(chr %*% produkty$cena)/10,"zł") )
   print( paste("Wartość energetyczna =", chr %*% produkty$energia, "kJ =", (chr %*% produkty$energia)*0.239, "kcal") )
