@@ -3,17 +3,11 @@
 # Created by: Krzysztof
 # Created on: 05.11.2020
 
-#RozwiÄ…zanie problemu plecakowego przy uĹĽyciu algorytmu genetycznego.
-
-#zadanie:
-#ZĹ‚odziej posiada plecak o udĹşwigu do 25 kg.
-#Jakie przedmioty powinien ukraĹ›Ä‡ (do 25 kg), aby w sumie miaĹ‚y one majwiÄ™kszÄ… wartoĹ›Ä‡?
-
-#Instalujemy/wĹ‚Ä…czamy wymagane pakiety
-#install.packages("GA")
+#Instalujemy wymagane pakiety
+install.packages("GA")
 library(GA)
 
-#Definiujemy zbiĂłr danych i limit plecaka
+#Definiujemy zbiór danych i zasobność portfela
 produkty <- data.frame(
   nazwa = c("Hamburger", "Cheeseburger","Big Mac", "McRoya", "WieśMac", "McChicken",
               "Filet-O-Fish", "Kurczakburger", "Jalapeño Burger", "Chikker", "McDouble", "McWrap Klasyczny",
