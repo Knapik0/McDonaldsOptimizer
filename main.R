@@ -14,8 +14,8 @@
 library(GA)
 
 #Definiujemy zbiĂłr danych i limit plecaka
-plecakDb <- data.frame(
-  produkt = c("Hamburger", "Cheeseburger","Big Mac", "McRoya", "WieśMac", "McChicken",
+produkty <- data.frame(
+  nazwa = c("Hamburger", "Cheeseburger","Big Mac", "McRoya", "WieśMac", "McChicken",
               "Filet-O-Fish", "Kurczakburger", "Jalapeño Burger", "Chikker", "McDouble", "McWrap Klasyczny",
               "McWrap Bekon DeLuxe", "Sałatka", "Sałatka Kurczak Premium",
               "6  McNuggets", "9  McNuggets", "20  McNuggets",
@@ -29,30 +29,25 @@ plecakDb <- data.frame(
   cena = c(40, 45, 122, 119, 119, 118, 106, 50, 45, 55, 64, 128, 132, 78, 157, 112, 132, 206,
            109, 144, 35, 50, 69, 78, 82, 56, 74, 56, 74, 56, 74, 45)
 )
-portfel <- 700
-#plecakDb
+portfel <- 500
 
-#Definiujemy funkcjÄ™ przystosowania
+#Definiujemy funkcję przystosowania
 fitnessFunc <- function(chr) {
-  calkowitaWartoscChr <- chr %*% plecakDb$energia
-  calkowitaWagaChr <- chr %*% plecakDb$cena
+  calkowitaWartoscChr <- chr %*% produkty$energia
+  calkowitaWagaChr <- chr %*% produkty$cena
   if (calkowitaWagaChr > portfel) return(-calkowitaWartoscChr)
   else return(calkowitaWartoscChr)
 }
 
-#Uruchamiamy algorytm genetyczny dla zadanych parametrĂłw
-wyniki <- ga(type="binary", nBits=32, fitness=fitnessFunc, popSize=100,
-             pcrossover=0.85, pmutation=0.05, elitism=5, maxiter=400, seed=10)
-
-#Podsumawanie dziaĹ‚ania algorytmu genetycznego
-summary(wyniki)
-plot(wyniki)
+#Uruchamiamy algorytm genetyczny dla zadanych parametrów
+wyniki <- ga(type="binary", nBits=32, fitness=fitnessFunc, popSize=500,
+             pcrossover=0.55, pmutation=0.25, elitism=5, maxiter=1000, seed=100)
 
 #Prezentacja najbardziej optymalnego zamówienia
 decode <- function(chr){
-  print(paste("Najbardziej optymalne zamówienie do kwoty",portfel/10,"zł:" ))
-  print( plecakDb[chr == 1, ] )
-  print( paste("Wartość zamówienia =",(chr %*% plecakDb$cena)/10,"zł") )
-  print( paste("Wartość energetyczna =", chr %*% plecakDb$energia, "kJ = ", (chr %*% plecakDb$energia)*0.239, "kcal") )
+  print( paste("Najbardziej optymalne zamówienie do kwoty",portfel/10,"zł:" ))
+  print( produkty[chr == 1, ] )
+  print( paste("Wartość zamówienia =",(chr %*% produkty$cena)/10,"zł") )
+  print( paste("Wartość energetyczna =", chr %*% produkty$energia, "kJ =", (chr %*% produkty$energia)*0.239, "kcal") )
 }
 decode(wyniki@solution[1,])
