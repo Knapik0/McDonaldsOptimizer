@@ -7,7 +7,7 @@
 install.packages("GA")
 library(GA)
 
-#Definiujemy zbiór danych i zasobność portfela
+#Definiujemy zbiór danych
 produkty <- data.frame(
   nazwa = c("Hamburger", "Cheeseburger","Big Mac", "McRoya", "WieśMac", "McChicken",
               "Filet-O-Fish", "Kurczakburger", "Jalapeño Burger", "Chikker", "McDouble", "McWrap Klasyczny",
@@ -46,26 +46,29 @@ produkty <- data.frame(
 #}
 #decode(wyniki@solution[1,])
 
-minKalorie <- 2400 / 0.239
+#Definiujemy minimalną wartość energetyczną zazmówienia
+minKalorie <- 1000 / 0.239
 
-#Drugi wariant funkcji przystosowania
+#Definiujemy funkcję przystosowania
 fitnessFunc <- function(chr) {
-  calkowitaWartoscChr <- chr %*% produkty$energia
-  calkowitaCenaChr <- chr %*% produkty$cena
-  if ((calkowitaWartoscChr < minKalorie) || calkowitaCenaChr == 0) return(-calkowitaCenaChr)
-  else return(200/calkowitaCenaChr)
+  calkowitaEnergia <- chr %*% produkty$energia
+  calkowitaCena <- chr %*% produkty$cena
+  if ((calkowitaEnergia < minKalorie) || calkowitaCena == 0) return(-calkowitaCena)
+  #Zwracamy odwrotność całkowitej ceny (dzięki temu najniższa wartość ceny jest najlepiej przystosowana)
+  else return(200/calkowitaCena)
 }
 
 
 #Uruchamiamy algorytm genetyczny dla zadanych parametrów
-wyniki <- ga(type="binary", nBits=32, fitness=fitnessFunc, popSize=300,
-             pcrossover=0.55, pmutation=0.25, elitism=5, maxiter=1000, seed=100)
+wyniki <- ga(type="binary", nBits=32, fitness=fitnessFunc, popSize=150,
+             pcrossover=0.55, pmutation=0.25, elitism=5, maxiter=200, seed=100)
 
+plot(wyniki)
 #Prezentacja najbardziej optymalnego zamówienia
 decode <- function(chr){
-  print( paste("Najbardziej optymalne zamówienie na min",minKalorie*0.239,"kcal:" ))
-  print( produkty[chr == 1, ] )
-  print( paste("Wartość zamówienia =",(chr %*% produkty$cena)/10,"zł") )
-  print( paste("Wartość energetyczna =", chr %*% produkty$energia, "kJ =", (chr %*% produkty$energia)*0.239, "kcal") )
+  print( paste("Najbardziej optymalne zamówienie na min" , minKalorie*0.239 , "kcal:" ))
+  print( produkty[chr == 1 , ] )
+  print( paste("Wartość zamówienia =" , (chr %*% produkty$cena)/10 , "zł") )
+  print( paste("Wartość energetyczna =" , chr %*% produkty$energia , "kJ =" , (chr %*% produkty$energia)*0.239 , "kcal") )
 }
 decode(wyniki@solution[1,])
