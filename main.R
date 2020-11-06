@@ -47,23 +47,24 @@ produkty <- data.frame(
 #decode(wyniki@solution[1,])
 
 #Definiujemy minimalną wartość energetyczną zazmówienia
-minKalorie <- 1000 / 0.239
+minKalorie <- 2000 / 0.239
 
-#Definiujemy funkcję przystosowania
+#Definiujemy funkcję przystosowania zwracającą odwrotność całkowitej ceny zamówienia
 fitnessFunc <- function(chr) {
   calkowitaEnergia <- chr %*% produkty$energia
   calkowitaCena <- chr %*% produkty$cena
   if ((calkowitaEnergia < minKalorie) || calkowitaCena == 0) return(-calkowitaCena)
-  #Zwracamy odwrotność całkowitej ceny (dzięki temu najniższa wartość ceny jest najlepiej przystosowana)
-  else return(200/calkowitaCena)
+  #Zwracamy odwrotność całkowitej ceny (najniższa wartość ceny jest najlepiej przystosowana)
+  else return(2000/calkowitaCena)
 }
 
 
 #Uruchamiamy algorytm genetyczny dla zadanych parametrów
 wyniki <- ga(type="binary", nBits=32, fitness=fitnessFunc, popSize=150,
-             pcrossover=0.55, pmutation=0.25, elitism=5, maxiter=200, seed=100)
-
+             pcrossover=0.85, pmutation=0.15, elitism=5, maxiter=200, seed=100, monitor = FALSE)
+#Drukujemy wykres
 plot(wyniki)
+
 #Prezentacja najbardziej optymalnego zamówienia
 decode <- function(chr){
   print( paste("Najbardziej optymalne zamówienie na min" , minKalorie*0.239 , "kcal:" ))
